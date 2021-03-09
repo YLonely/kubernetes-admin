@@ -13,6 +13,8 @@ import store from './store'
 import router from './router'
 import valid from '@/api/common'
 import VuePipeline from 'vue-pipeline'
+import VueCodeMirror from "vue-codemirror"
+import "codemirror/lib/codemirror.css"
 
 import '@/icons' // icon
 import '@/permission' // permission control
@@ -35,6 +37,7 @@ Vue.prototype.$valid = valid
 // 如果想要中文版 element-ui，按如下方式声明
 Vue.use(VuePipeline)
 Vue.use(ElementUI)
+Vue.use(VueCodeMirror)
 
 Vue.config.productionTip = false
 
