@@ -1,5 +1,12 @@
 <template>
-  <el-table :data="tableData" style="width: 100%" max-height="500">
+  <el-table
+    :data="tableData"
+    style="
+      width: 100%;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
+    "
+    max-height="700"
+  >
     <el-table-column
       prop="name"
       label="函数名称"
@@ -18,7 +25,7 @@
         <el-row :gutter="1">
           <el-col :span="7">
             <el-button
-              @click.native.prevent="deleteFunction(scope.$index, tableData)"
+              @click.native.prevent="deleteFunction(scope.$index)"
               size="mini"
               type="danger"
             >
@@ -30,6 +37,9 @@
               @click="
                 invokeDialogVisible = true;
                 currentIndex = scope.$index;
+                invokeForm.content = '';
+                invokeForm.return = '';
+                invokeForm.duration = '未知';
               "
               size="mini"
             >
@@ -69,14 +79,24 @@
               </el-form>
               <div slot="footer" class="dialog-footer">
                 <el-button @click="dialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click.native.prevent="invokeFunction"
+                <el-button
+                  type="primary"
+                  @click.native.prevent="invokeFunction"
+                  :loading="invokeForm.loading"
                   >请 求</el-button
                 >
               </div>
             </el-dialog>
           </el-col>
           <el-col :span="7">
-            <el-button @click="scaleDialogVisible = true" size="mini">
+            <el-button
+              @click="
+                scaleDialogVisible = true;
+                currentIndex = scope.$index;
+                scaleNum = 0;
+              "
+              size="mini"
+            >
               伸缩
             </el-button>
             <el-dialog title="伸缩函数" :visible.sync="scaleDialogVisible">
@@ -88,7 +108,7 @@
               ></el-input-number>
               <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="dialogVisible = false"
+                <el-button type="primary" @click.native.prevent="scaleFunction"
                   >确 定</el-button
                 >
               </span>
@@ -102,7 +122,12 @@
 
 <script>
 import Axios from "axios";
-const URLOpenfaas = "http://192.168.150.128:9528/openfaas";
+import { Axis } from "echarts/lib/export";
+const URLOpenfaas = "http://192.168.150.128:9528/serverless";
+const instance = Axios.create({
+  baseURL: URLOpenfaas,
+  timeout: 1000,
+});
 export default {
   data() {
     return {
@@ -117,10 +142,95 @@ export default {
         content: "",
         return: "",
         duration: "未知",
+        loading: false,
       },
     };
   },
   methods: {
+    deleteFunction: function (index) {
+      let funcName = this.tableData[index].name;
+      this.$confirm("是否确定删除该函数？", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(() => {
+        instance
+          .delete("/system/functions?namespace=openfaas-fn", {
+            data: {
+              functionName: funcName,
+            },
+            headers: { "Content-Type": "application/json" },
+            responseType: "json",
+          })
+          .then(() => {
+            this.$message("删除成功");
+            this.tableData[index].status = "Deleting";
+          })
+          .catch((error1) => {
+            this.$message(
+              "发生错误：" + error1.statusText + "\n" + error1.data
+            );
+          });
+      });
+    },
+    scaleFunction: function () {
+      let funcName = this.tableData[this.currentIndex].name;
+      instance
+        .post(
+          "/system/scale-function/" + funcName,
+          {
+            serviceName: funcName + ".openfaas-fn",
+            replicas: this.scaleNum,
+          },
+          {
+            headers: { "Content-Type": "application/json" },
+          }
+        )
+        .then(() => {
+          this.$message("设置成功");
+          this.scaleDialogVisible = false;
+        })
+        .catch((error1) => {
+          this.$message("发生错误：" + error1.statusText + "\n" + error1.data);
+        });
+    },
+    invokeFunction: function () {
+      let requestContentType =
+        this.invokeForm.type === "json" ? "application/json" : "text/plain";
+      let funcInfo = this.tableData[this.currentIndex];
+      let invocationStart = new Date().getTime();
+      this.invokeForm.loading = true;
+      instance
+        .post(
+          "/function/" + funcInfo.name + ".openfaas-fn",
+          this.invokeForm.content,
+          {
+            headers: { "Content-Type": requestContentType },
+            responseType: this.invokeForm.type,
+          }
+        )
+        .then((response) => {
+          let data = response.data;
+          let status = response.status;
+          if (typeof data === "object") {
+            this.invokeForm.return = JSON.stringify(data, null, 2);
+          } else {
+            this.invokeForm.return = data;
+          }
+          let invocationEnd = new Date().getTime();
+          this.invokeForm.duration =
+            (invocationEnd - invocationStart) / 1000 + " s";
+          this.$message("请求成功");
+        })
+        .catch((error1) => {
+          this.invokeForm.return = error1.statusText + "\n" + error1.data;
+          let invocationEnd = new Date().getTime();
+          this.invokeForm.duration =
+            (invocationEnd - invocationStart) / 1000 + " s";
+          this.$message("错误");
+        });
+      this.invokeForm.loading = false;
+    },
     updateFunctionInfo: function () {
       const instance = Axios.create({
         baseURL: URLOpenfaas,
@@ -135,14 +245,25 @@ export default {
         .then((response) => {
           console.log(this.currentIndex);
           let newTableData = [];
+          let currentTableMap = new Map();
+          this.tableData.forEach((item, index, array) => {
+            currentTableMap.set(item.name, item);
+          });
           response.data.forEach((item, index, array) => {
-            newTableData.push({
+            let newFuncInfo = {
               name: item.name,
-              status: item.replicas > 0 ? "Ready" : "Not ready",
               replicas: item.replicas,
               image: item.image,
+              status: item.replicas > 0 ? "Ready" : "Not ready",
               url: URLOpenfaas + "/function/" + item.name,
-            });
+            };
+            if (currentTableMap.get(item.name)) {
+              let info = currentTableMap.get(item.name);
+              if (info.status !== "Ready" && info.status !== "Not ready") {
+                newFuncInfo.status = info.status;
+              }
+            }
+            newTableData.push(newFuncInfo);
           });
           this.tableData = newTableData.sort((a, b) => {
             if (a.name < b.name) return -1;

@@ -37,11 +37,11 @@ module.exports = {
       errors: true
     },
     proxy: {
-      "/openfaas": {
+      "/serverless": {
         target: "http://192.168.150.128:31112",
         changeOrigin: true,
         pathRewrite: {
-          "^/openfaas": ""
+          "^/serverless": ""
         }
       }
     }

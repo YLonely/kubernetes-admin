@@ -70,7 +70,7 @@ export const constantRoutes = [
             path: 'DepAppMarket',
             name: 'DepAppMarket',
             component: () => import('@/views/appMarket/index'),
-            meta: { title: 'dep', icon: 'resources', kind: 'Deployment'}
+            meta: { title: 'dep', icon: 'resources', kind: 'Deployment' }
           },
           {
             path: 'routesView',
