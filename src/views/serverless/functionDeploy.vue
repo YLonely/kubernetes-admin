@@ -89,15 +89,12 @@
 </template>
 
 <script>
-import { codemirror } from "vue-codemirror";
-import "codemirror/lib/codemirror.css";
-import "codemirror/mode/javascript/javascript.js";
-import "codemirror/mode/python/python.js";
-import "codemirror/mode/go/go.js";
-import "codemirror/mode/clike/clike.js";
-
-// import theme style
-import "codemirror/theme/idea.css";
+import Axios from "axios";
+const URLOpenfaas = "http://192.168.150.128:9528/serverless";
+const instance = Axios.create({
+  baseURL: URLOpenfaas,
+  timeout: 1000,
+});
 export default {
   components: {
     codemirror,
@@ -123,31 +120,42 @@ export default {
     };
   },
   methods: {
-    handleCodeType: function (type) {
-      this.activeName = "code";
-      this.codeType = type;
-      if (type === "text/x-python-ml") {
-        this.cmOptions.mode = "text/x-python";
-      } else {
-        this.cmOptions.mode = type;
+    createFromImage: function () {
+      let envVars = {};
+      let labels = {};
+      for (let i = 0; i < this.form.envs.length; i++) {
+        if (this.form.envs[i].key && this.form.envs[i].value) {
+          envVars[this.form.envs[i].key] = this.form.envs[i].value;
+        }
       }
-      switch (type) {
-        case "text/x-python":
-        case "text/x-python-ml":
-          this.readableCodeType = "Python";
-          break;
-        case "text/javascript":
-          this.readableCodeType = "Javascript";
-          break;
-        case "text/x-go":
-          this.readableCodeType = "Golang";
-          break;
-        case "text/x-java":
-          this.readableCodeType = "Java";
-          break;
+      for (let i = 0; i < this.form.labels.length; i++) {
+        if (this.form.labels[i].key && this.form.labels[i].value) {
+          labels[this.form.labels[i].key] = this.form.labels[i].value;
+        }
       }
+      instance
+        .post(
+          "/system/functions",
+          {
+            annotations: {},
+            envVars,
+            image: this.form.imageName,
+            labels,
+            namespace: "openfaas-fn",
+            secrets: [],
+            service: this.form.funcName,
+          },
+          {
+            headers: { "Content-Type": "application/json" },
+          }
+        )
+        .then(() => {
+          this.$message("部署成功");
+        })
+        .catch((error1) => {
+          this.$message("发生错误：" + error1.statusText + "\n" + error1.data);
+        });
     },
-    createFromImage: function () {},
     handleEnv: function (index) {
       if (index === this.form.envs.length - 1) {
         this.form.envs.push({});

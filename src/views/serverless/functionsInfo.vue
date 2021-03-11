@@ -122,7 +122,6 @@
 
 <script>
 import Axios from "axios";
-import { Axis } from "echarts/lib/export";
 const URLOpenfaas = "http://192.168.150.128:9528/serverless";
 const instance = Axios.create({
   baseURL: URLOpenfaas,
