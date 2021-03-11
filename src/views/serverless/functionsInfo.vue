@@ -12,15 +12,15 @@
       label="函数名称"
       min-width="12%"
     ></el-table-column>
-    <el-table-column prop="status" label="状态" min-width="12%">
+    <el-table-column prop="status" label="状态" min-width="10%">
     </el-table-column>
-    <el-table-column prop="replicas" label="副本数" min-width="12%">
+    <el-table-column prop="replicas" label="副本数" min-width="8%">
     </el-table-column>
     <el-table-column prop="image" label="使用镜像" min-width="18%">
     </el-table-column>
     <el-table-column prop="url" label="访问URL" min-width="30%">
     </el-table-column>
-    <el-table-column label="操作" min-width="16%">
+    <el-table-column label="操作" min-width="22%">
       <template slot-scope="scope">
         <el-row :gutter="1">
           <el-col :span="7">
