@@ -7,7 +7,50 @@
             <el-input v-model="form.imageName"></el-input>
           </el-col>
           <el-col :span="3">
-            <el-button size="mini" type="primary">上传镜像</el-button>
+            <el-button
+              size="mini"
+              type="primary"
+              @click="
+                uploadDialogVisible = true;
+                fileList = [];
+              "
+              >创建</el-button
+            >
+            <el-dialog
+              title="创建函数镜像以及检查点"
+              :visible.sync="uploadDialogVisible"
+            >
+              <el-upload
+                action=""
+                :before-remove="beforeRemove"
+                multiple
+                :limit="1"
+                :on-exceed="handleExceed"
+                :file-list="fileList"
+              >
+                <el-button size="small" type="primary"
+                  >点击上传函数镜像文件</el-button
+                >
+                <div slot="tip" class="el-upload__tip">
+                  只能上传tar文件，且不超过5GB
+                </div>
+              </el-upload>
+              <el-form label-position="top">
+                <el-form-item label="镜像名称">
+                  <el-input
+                    placeholder="函数功能+版本，如 curl:v0"
+                    v-model="uploadForm.imageName"
+                  >
+                    <template slot="prepend">serverless.io/image/</template>
+                  </el-input>
+                </el-form-item>
+                <el-form-item label="检查点名称">
+                  <el-input v-model="uploadForm.checkpointName">
+                    <template slot="prepend">serverless.io/checkpoint/</template>
+                  </el-input>
+                </el-form-item>
+              </el-form>
+            </el-dialog>
           </el-col>
         </el-row>
       </el-form-item>
@@ -96,11 +139,14 @@ const instance = Axios.create({
   timeout: 1000,
 });
 export default {
-  components: {
-    codemirror,
-  },
   data() {
     return {
+      uploadDialogVisible: false,
+      fileList: [],
+      uploadForm: {
+        imageName: "",
+        checkpointName: "",
+      },
       form: {
         imageName: "",
         funcName: "",
@@ -169,6 +215,16 @@ export default {
       } else {
         this.form.labels.splice(index, 1);
       }
+    },
+    handleExceed(files, fileList) {
+      this.$message.warning(
+        `当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${
+          files.length + fileList.length
+        } 个文件`
+      );
+    },
+    beforeRemove(file, fileList) {
+      return this.$confirm(`确定移除 ${file.name}？`);
     },
   },
 };
