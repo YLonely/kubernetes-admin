@@ -42,7 +42,14 @@ module.exports = {
         changeOrigin: true,
         pathRewrite: {
           "^/serverless": ""
-        }
+        },
+      },
+      "/manager": {
+        target: "http://192.168.150.128:31118",
+        changeOrigin: true,
+        pathRewrite: {
+          "^/manager": ""
+        },
       }
     }
   },

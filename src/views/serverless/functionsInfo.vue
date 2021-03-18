@@ -78,7 +78,6 @@
                 </el-form-item>
               </el-form>
               <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible = false">取 消</el-button>
                 <el-button
                   type="primary"
                   @click.native.prevent="invokeFunction"
