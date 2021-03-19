@@ -28,7 +28,7 @@
               :visible.sync="uploadDialogVisible"
             >
               <el-upload
-                action="http://192.168.150.128:9528/manager/image/upload"
+                action="http://133.133.135.25:9528/manager/image/upload"
                 :before-remove="beforeRemove"
                 multiple
                 :limit="1"
@@ -151,15 +151,15 @@
 
 <script>
 import Axios from "axios";
-const URLOpenfaas = "http://192.168.150.128:9528/serverless";
-const URLManager = "http://192.168.150.128:9528/manager";
+const URLOpenfaas = "http://133.133.135.25:9528/serverless";
+const URLManager = "http://133.133.135.25:9528/manager";
 const invokerOpenfaas = Axios.create({
   baseURL: URLOpenfaas,
   timeout: 1000,
 });
 const invokerManager = Axios.create({
   baseURL: URLManager,
-  timeout: 10000,
+  timeout: 50000,
 });
 const errMsg = new Map([
   ["initial", "初始化失败"],

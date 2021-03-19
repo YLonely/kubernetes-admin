@@ -38,14 +38,14 @@ module.exports = {
     },
     proxy: {
       "/serverless": {
-        target: "http://192.168.150.128:31112",
+        target: "http://133.133.135.25:31112",
         changeOrigin: true,
         pathRewrite: {
           "^/serverless": ""
         },
       },
       "/manager": {
-        target: "http://192.168.150.128:31118",
+        target: "http://133.133.135.25:31118",
         changeOrigin: true,
         pathRewrite: {
           "^/manager": ""

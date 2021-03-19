@@ -121,7 +121,7 @@
 
 <script>
 import Axios from "axios";
-const URLOpenfaas = "http://192.168.150.128:9528/serverless";
+const URLOpenfaas = "http://133.133.135.25:9528/serverless";
 const instance = Axios.create({
   baseURL: URLOpenfaas,
   timeout: 1000,
