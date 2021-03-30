@@ -8,7 +8,7 @@
       auto-complete="on"
       label-position="left"
     >
-      <div class="title-container">
+      <div class="title-container" v-show="false">
         <el-select
           v-model="chosenTitle"
           style="width: 112%; margin-bottom: 20px"

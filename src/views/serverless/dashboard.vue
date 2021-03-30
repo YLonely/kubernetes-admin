@@ -2,43 +2,40 @@
   <div>
     <el-row :gutter="20">
       <el-col :span="12">
-        <iframe
-          src="http://133.133.135.25:31114/d-solo/PQW4NA8Mz/original-open-faas-dashboard?orgId=1&refresh=5s&panelId=1&from=now-30s&to=now"
-          frameborder="0"
-        ></iframe>
-      </el-col>
-      <el-col :span="12">
-        <iframe
-          src="http://133.133.135.25:31114/d-solo/PQW4NA8Mz/original-open-faas-dashboard?orgId=1&refresh=5s&panelId=2&from=now-30s&to=now"
-          frameborder="0"
-        ></iframe>
-      </el-col>
-    </el-row>
-    <el-row :gutter="20">
-      <el-col :span="12">
-        <iframe
-          src="http://133.133.135.25:31114/d-solo/PQW4NA8Mz/original-open-faas-dashboard?orgId=1&refresh=5s&panelId=7&from=now-30s&to=now"
-          frameborder="0"
-        ></iframe>
+        <el-row>
+          <iframe
+            src="http://133.133.135.25:31114/d-solo/PQW4NA8Mz/original-open-faas-dashboard?orgId=1&refresh=5s&panelId=7&from=now-30s&to=now"
+            frameborder="0"
+            style="height: 248px"
+          ></iframe>
+        </el-row>
+        <el-row>
+          <iframe
+            src="http://133.133.135.25:31114/d-solo/PQW4NA8Mz/original-open-faas-dashboard?orgId=1&refresh=5s&panelId=10&from=now-30s&to=now"
+            frameborder="0"
+            style="height: 249px"
+          ></iframe>
+        </el-row>
       </el-col>
       <el-col :span="12">
         <iframe
           src="http://133.133.135.25:31114/d-solo/PQW4NA8Mz/original-open-faas-dashboard?orgId=1&refresh=5s&panelId=8&from=now-30s&to=now"
           frameborder="0"
+          style="height: 500px"
         ></iframe>
       </el-col>
     </el-row>
     <el-row :gutter="20">
       <el-row :gutter="20">
-        <el-col :span="12">
+        <el-col :span="12" style="padding-left: 20px">
           <iframe
             src="http://133.133.135.25:31114/d-solo/PQW4NA8Mz/original-open-faas-dashboard?orgId=1&refresh=5s&panelId=3&from=now-30s&to=now"
             frameborder="0"
           ></iframe>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="12" style="padding-right: 20px">
           <iframe
-            src="http://133.133.135.25:31114/d-solo/PQW4NA8Mz/original-open-faas-dashboard?orgId=1&refresh=5s&panelId=4&from=now-30s&to=now"
+            src="http://133.133.135.25:31114/d-solo/PQW4NA8Mz/original-open-faas-dashboard?orgId=1&refresh=5s&panelId=2&from=now-30s&to=now"
             frameborder="0"
           ></iframe>
         </el-col>

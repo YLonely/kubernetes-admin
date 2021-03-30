@@ -36,7 +36,7 @@
             <el-button
               @click="
                 invokeDialogVisible = true;
-                currentIndex = scope.$index;
+                currentFuncInfo = tableData[scope.$index];
                 invokeForm.content = '';
                 invokeForm.return = '';
                 invokeForm.duration = '未知';
@@ -129,7 +129,7 @@ const instance = Axios.create({
 export default {
   data() {
     return {
-      currentIndex: 0,
+      currentFuncInfo: undefined,
       invokeDialogVisible: false,
       scaleDialogVisible: false,
       scaleNum: 0,
@@ -195,7 +195,7 @@ export default {
     invokeFunction: function () {
       let requestContentType =
         this.invokeForm.type === "json" ? "application/json" : "text/plain";
-      let funcInfo = this.tableData[this.currentIndex];
+      let funcInfo = this.currentFuncInfo;
       let invocationStart = new Date().getTime();
       this.invokeForm.loading = true;
       instance
